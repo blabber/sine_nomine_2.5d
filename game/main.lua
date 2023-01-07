@@ -1,124 +1,7 @@
--- Coordinate {{{
-
-Coordinate = { }
-
-function Coordinate:new (x, y)
-	local c = {
-		x = x or 0,
-		y = y or 0
-	}
-
-	self.__index = self
-	setmetatable(c, self)
-
-	return c
-end
-
-function Coordinate:angle (c)
-	return math.atan2(c.y - self.y, c.x - self.x)
-end
-
-function Coordinate:distance (c)
-	local dh = c.x - self.x
-	local dv = c.y - self.y
-
-	return math.sqrt((dh ^2) + (dv ^2))
-end
-
-function Coordinate:clone ()
-	return Coordinate:new(self.x, self.y)
-end
-
---- }}}
-
--- {{{ Tile
-
-Tile = { }
-
-function Tile:new (p, g, h)
-	local t = { position = p, glyph = g, height = h }
-
-	self.__index = self
-	setmetatable(t, self)
-
-	return t
-end
-
-function Tile:draw (l)
-	if self.position.x == player.position.x and
-	   self.position.y == player.position.y then
-		return
-	end
-
-	if l >= self.height then
-		return
-	end
-
-	local a = self.position:angle(player.position)
-	local d = self.position:distance(player.position)
-
-	local dx = -(math.cos(a) * (d / 25))
-	local dy = -(math.sin(a) * (d / 25))
-
-	local c = 0;
-
-	c = c + (l+1) * (1 / self.height)
-	if l == self.height - 1 then
-		c = 1
-	end
-	love.graphics.setColor(c, c, c)
-	love.graphics.print(
-		self.glyph,
-		self.position.x + l * dx,
-		self.position.y + l * dy)
-end
-
--- }}}
-
--- {{{ Player
-
-Player = { }
-
-function Player:new (c)
-	local p = {}
-	p.position = c
-
-	self.__index = self
-	setmetatable(p, self)
-
-	return p
-end
-
-function Player:keypressed (key)
-	local t = self.position:clone()
-
-	if key == "up" then
-		self.position.y = self.position.y - tileDimension.y
-	elseif key =="down" then
-		self.position.y = self.position.y + tileDimension.y
-	elseif key =="left" then
-		self.position.x = self.position.x - tileDimension.x
-	elseif key =="right" then
-		self.position.x = self.position.x + tileDimension.x
-	end
-
-	local lx = (self.position.x) / tileDimension.x
-	local ly = (self.position.y) / tileDimension.y
-	local lg = level[ly][lx]
-	if lg == '#' then
-		self.position = t
-	end
-end
-
-function Player:draw ()
-	love.graphics.setColor(0.5, 0.5, 0)
-	love.graphics.print(
-		'@',
-		self.position.x,
-		self.position.y)
-end
-
--- }}}
+sn = {}
+sn.coordinate = require 'sn.coordinate'
+sn.player = require 'sn.player'
+sn.tile = require 'sn.tile'
 
 function love.load ()
 	-- {{{ Level
@@ -175,18 +58,18 @@ function love.load ()
 	for y = 1, #level do
 		for x = 1, #level[y] do
 			local g = level[y][x]
-			local c = Coordinate:new(x * tileDimension.x, y * tileDimension.y)
+			local c = sn.coordinate.new(x * tileDimension.x, y * tileDimension.y)
 
 			if g == ' ' then
 				goto continue
 			elseif g == 's' then
 				g = '.'
-				player = Player:new(c:clone())
+				player = sn.player.new(c:clone())
 			end
 
 			local h = g == '#' and 5 or 1
 
-			tiles[#tiles+1] = Tile:new(c:clone(), g, h)
+			tiles[#tiles+1] = sn.tile.new(c:clone(), g, h)
 
 			::continue::
 		end
