@@ -16,18 +16,16 @@ function Player:keypressed (key)
 	local t = self.position:clone()
 
 	if key == "up" then
-		self.position.y = self.position.y - tileDimension.y
+		self.position:setY(self.position:getY() - 1)
 	elseif key =="down" then
-		self.position.y = self.position.y + tileDimension.y
+		self.position:setY(self.position:getY() + 1)
 	elseif key =="left" then
-		self.position.x = self.position.x - tileDimension.x
+		self.position:setX(self.position:getX() - 1)
 	elseif key =="right" then
-		self.position.x = self.position.x + tileDimension.x
+		self.position:setX(self.position:getX() + 1)
 	end
 
-	local lx = (self.position.x) / tileDimension.x
-	local ly = (self.position.y) / tileDimension.y
-	local lg = level[ly][lx]
+	local lg = level[self.position:getY()][self.position:getX()]
 	if lg == '#' then
 		self.position = t
 	end
@@ -37,8 +35,8 @@ function Player:draw ()
 	love.graphics.setColor(0.5, 0.5, 0)
 	love.graphics.print(
 		'@',
-		self.position.x,
-		self.position.y)
+		self.position:getScreenX(),
+		self.position:getScreenY())
 end
 
 return M

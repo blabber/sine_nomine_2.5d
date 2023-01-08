@@ -12,8 +12,8 @@ function M.new (p, g, h)
 end
 
 function Tile:draw (l)
-	if self.position.x == player.position.x and
-	   self.position.y == player.position.y then
+	if self.position:getX() == player.position:getX() and
+	   self.position:getY() == player.position:getY() then
 		return
 	end
 
@@ -36,8 +36,8 @@ function Tile:draw (l)
 	love.graphics.setColor(c, c, c)
 	love.graphics.print(
 		self.glyph,
-		self.position.x + l * dx,
-		self.position.y + l * dy)
+		self.position:getScreenX() + l * dx,
+		self.position:getScreenY() + l * dy)
 end
 
 return M

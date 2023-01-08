@@ -49,16 +49,12 @@ function love.load ()
 	-- }}}
 
 	local f = love.graphics.setNewFont('font/PressStart2P-vaV7.ttf', 40)
-	tileDimension = {
-		x = f:getWidth('#'),
-		y = f:getHeight('#')
-	}
 
 	tiles = {}
 	for y = 1, #level do
 		for x = 1, #level[y] do
 			local g = level[y][x]
-			local c = sn.coordinate.new(x * tileDimension.x, y * tileDimension.y)
+			local c = sn.coordinate.new(x, y, f:getWidth('#'), f:getHeight('#'))
 
 			if g == ' ' then
 				goto continue
@@ -82,8 +78,8 @@ end
 
 function love.draw ()
 	love.graphics.translate(
-		love.graphics.getWidth() / 2 - player.position.x,
-		love.graphics.getHeight() / 2 - player.position.y)
+		love.graphics.getWidth() / 2 - player.position:getScreenX(),
+		love.graphics.getHeight() / 2 - player.position:getScreenY())
 
 	for l = 0, 4 do
 		for _, t in pairs(tiles) do
