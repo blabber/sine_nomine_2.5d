@@ -79,6 +79,10 @@ function love.load ()
 	end
 end
 
+function love.update (dt)
+	player:update(dt)
+end
+
 function love.keypressed (key)
 	player:keypressed(key)
 end

@@ -37,6 +37,14 @@ function Coordinate:getY ()
 	return P[self].y
 end
 
+function Coordinate:setScreenX (x)
+	P[self].x = x / P[self].xf
+end
+
+function Coordinate:setScreenY (y)
+	P[self].y = y / P[self].yf
+end
+
 function Coordinate:getScreenX ()
 	return P[self].x * P[self].xf
 end
