@@ -13,29 +13,6 @@ function M.new (c)
 	return p
 end
 
-function Player:keypressed (key)
-	if key == nil or self:isMoving() then
-		return
-	end
-
-	local t = self.target:clone()
-
-	if key == "up" then
-		self.target:setY(self.position:getY() - 1)
-	elseif key =="down" then
-		self.target:setY(self.position:getY() + 1)
-	elseif key =="left" then
-		self.target:setX(self.position:getX() - 1)
-	elseif key =="right" then
-		self.target:setX(self.position:getX() + 1)
-	end
-
-	local lg = level[self.target:getY()][self.target:getX()]
-	if lg == '#' then
-		self.target = t
-	end
-end
-
 function Player:isMoving()
 	return (self.target:getScreenX() ~= self.position:getScreenX()) or
 	       (self.target:getScreenY() ~= self.position:getScreenY())

@@ -11,9 +11,9 @@ function M.new (p, g, h)
 	return t
 end
 
-function Tile:draw (l)
-	if self.position:getX() == player.position:getX() and
-	   self.position:getY() == player.position:getY() then
+function Tile:draw (l, vp)
+	if self.position:getX() == vp:getX() and
+	   self.position:getY() == vp:getY() then
 		return
 	end
 
@@ -21,8 +21,8 @@ function Tile:draw (l)
 		return
 	end
 
-	local a = self.position:angle(player.position)
-	local d = self.position:distance(player.position)
+	local a = self.position:angle(vp)
+	local d = self.position:distance(vp)
 
 	local dx = -(math.cos(a) * (d / 25))
 	local dy = -(math.sin(a) * (d / 25))
