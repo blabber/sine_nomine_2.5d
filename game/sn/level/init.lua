@@ -87,7 +87,7 @@ function Level:draw ()
 		love.graphics.getHeight() / 2 - player.position:getScreenY())
 
 	local tiles = private[self].tiles
-	for l = 0, 4 do
+	for l = 1, 5 do
 		for _, r in pairs(tiles) do
 			for _, t in pairs(r) do
 				t:draw(l, player.position)

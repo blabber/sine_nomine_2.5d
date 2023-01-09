@@ -17,7 +17,7 @@ function Tile:draw (l, vp)
 		return
 	end
 
-	if l >= self.height then
+	if l > self.height then
 		return
 	end
 
@@ -27,12 +27,8 @@ function Tile:draw (l, vp)
 	local dx = -(math.cos(a) * (d / 25))
 	local dy = -(math.sin(a) * (d / 25))
 
-	local c = 0;
+	local c = 1 - (5-l) * (1 / (5 * 1.25))
 
-	c = c + (l+1) * (1 / self.height)
-	if l == self.height - 1 then
-		c = 1
-	end
 	love.graphics.setColor(c, c, c)
 	love.graphics.print(
 		self.glyph,
