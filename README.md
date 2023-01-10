@@ -13,5 +13,5 @@ Currently it looks like this:
 ![screenshot of the program](https://raw.githubusercontent.com/blabber/sine_nomine_2.5d/master/screenshot.png "Screenshot")
 
 As this looks better in movement, you can play around with this
-[here](https://blabber.github.io/sine_nomine_2.5d/) (move around using your
-arrow keys).
+[here](https://blabber.github.io/sine_nomine_2.5d/). You can move around using
+your arrow keys, or just click/touch in the general direction you want to move.
