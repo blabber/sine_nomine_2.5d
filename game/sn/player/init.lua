@@ -3,10 +3,10 @@ local M = { }
 local Player = { }
 Player.__index = Player
 
-function M.new(c)
+function M.new(tile)
 	local p = {
-		position = c,
-		target = c:clone()
+		tile = tile,
+		target = tile.position:clone()
 	}
 	setmetatable(p, Player)
 
@@ -15,8 +15,8 @@ end
 
 function Player:isMoving()
 	return 
-		(self.target:getScreenX() ~= self.position:getScreenX()) or
-		(self.target:getScreenY() ~= self.position:getScreenY())
+		(self.target:getScreenX() ~= self.tile.position:getScreenX()) or
+		(self.target:getScreenY() ~= self.tile.position:getScreenY())
 end
 
 function Player:update(deltaTime)
@@ -26,35 +26,32 @@ function Player:update(deltaTime)
 
 	local delta = 100 * deltaTime
 
-	if self.position:getScreenX() < self.target:getScreenX() then
-		self.position:setScreenX(
+	local position = self.tile.position
+	if position:getScreenX() < self.target:getScreenX() then
+		position:setScreenX(
 			math.min(
-				self.position:getScreenX() + delta,
+				position:getScreenX() + delta,
 				self.target:getScreenX()))
-	elseif self.position:getScreenX() > self.target:getScreenX() then
-		self.position:setScreenX(
+	elseif position:getScreenX() > self.target:getScreenX() then
+		position:setScreenX(
 			math.max(
-				self.position:getScreenX() - delta,
+				position:getScreenX() - delta,
 				self.target:getScreenX()))
-	elseif self.position:getScreenY() < self.target:getScreenY() then
-		self.position:setScreenY(
+	elseif position:getScreenY() < self.target:getScreenY() then
+		position:setScreenY(
 			math.min(
-				self.position:getScreenY() + delta,
+				position:getScreenY() + delta,
 				self.target:getScreenY()))
-	elseif self.position:getScreenY() > self.target:getScreenY() then
-		self.position:setScreenY(
+	elseif position:getScreenY() > self.target:getScreenY() then
+		position:setScreenY(
 				math.max(
-					self.position:getScreenY() - delta,
+					position:getScreenY() - delta,
 					self.target:getScreenY()))
 	end
 end
 
-function Player:draw()
-	love.graphics.setColor(0.5, 0.5, 0)
-	love.graphics.print(
-		'@',
-		self.position:getScreenX(),
-		self.position:getScreenY())
+function Player:draw(heightLevel, vanishingPoint)
+	self.tile:draw(heightLevel, vanishingPoint)
 end
 
 return M

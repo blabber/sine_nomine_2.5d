@@ -5,7 +5,7 @@ sn.tile = require "sn.tile"
 
 local M = { }
 
-local function createTile(coordinate, glyph)
+local function createTile(coordinate, glyph, font)
 	local h = 1
 	if glyph == '#' then
 		h = 5
@@ -15,7 +15,7 @@ local function createTile(coordinate, glyph)
 		glyph = '#'
 	end
 
-	return sn.tile.new(coordinate, glyph, h)
+	return sn.tile.new(coordinate, glyph, font, h)
 end
 
 local private = { }
@@ -41,16 +41,20 @@ function M.fromString(font, levelString)
 			local x = #tilesRow + 1
 			local y = #tiles
 			local w = font:getWidth('#')
-			local h = font:getHeight('#')
+			local h = font:getHeight()
 
 			local c = sn.coordinate.new(x, y, w, h)
 
 			if g == 's' then
 				g = '.'
-				private[newLevel].player = sn.player.new(c:clone())
+
+				local pt = createTile(c:clone(), '@', font)
+
+				pt:setColor(1, 1, 0)
+				private[newLevel].player = sn.player.new(pt)
 			end
 
-			tilesRow[#tilesRow+1] = createTile(c:clone(), g)
+			tilesRow[#tilesRow+1] = createTile(c:clone(), g, font)
 		end
 	end
 
@@ -71,13 +75,13 @@ function Level:keypressed(key)
 	local t = player.target:clone()
 
 	if key == "up" then
-		player.target:setY(player.position:getY() - 1)
+		player.target:setY(player.tile.position:getY() - 1)
 	elseif key =="down" then
-		player.target:setY(player.position:getY() + 1)
+		player.target:setY(player.tile.position:getY() + 1)
 	elseif key =="left" then
-		player.target:setX(player.position:getX() - 1)
+		player.target:setX(player.tile.position:getX() - 1)
 	elseif key =="right" then
-		player.target:setX(player.position:getX() + 1)
+		player.target:setX(player.tile.position:getX() + 1)
 	end
 
 	local tiles = private[self].tiles
@@ -91,19 +95,19 @@ function Level:draw()
 	local player = private[self].player
 
 	love.graphics.translate(
-		love.graphics.getWidth() / 2 - player.position:getScreenX(),
-		love.graphics.getHeight() / 2 - player.position:getScreenY())
+		love.graphics.getWidth() / 2 - player.tile.position:getScreenX(),
+		love.graphics.getHeight() / 2 - player.tile.position:getScreenY())
 
 	local tiles = private[self].tiles
 	for l = 0, 4 do
 		for _, r in pairs(tiles) do
 			for _, t in pairs(r) do
-				t:draw(l, player.position)
+				t:draw(l, player.tile.position)
 			end
 		end
 	end
 
-	player:draw()
+	player:draw(0, player.tile.position)
 end
 
 return M
