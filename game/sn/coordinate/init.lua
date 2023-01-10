@@ -1,73 +1,74 @@
 local M = {}
 
-local P = { }
-setmetatable(P, { __mode = 'k' })
+local private = { }
+setmetatable(private, { __mode = 'k' })
 
 local Coordinate = { }
+Coordinate.__index = Coordinate
 
-function M.new (x, y, xf, yf)
+function M.new(x, y, xFactor, yFactor)
 	local c = { }
-
-	Coordinate.__index = Coordinate
 	setmetatable(c, Coordinate)
 
-	P[c] = {
+	private[c] = {
 		x = x or 0,
 		y = y or 0,
-		xf = xf or 1,
-		yf = yf or 1
+		xFactor = xFactor or 1,
+		yFactor = yFactor or 1
 	}
 
 	return c
 end
 
-function Coordinate:setX (x)
-	P[self].x = x
+function Coordinate:setX(x)
+	private[self].x = x
 end
 
-function Coordinate:setY (y)
-	P[self].y = y
+function Coordinate:setY(y)
+	private[self].y = y
 end
 
-function Coordinate:getX ()
-	return P[self].x
+function Coordinate:getX()
+	return private[self].x
 end
 
-function Coordinate:getY ()
-	return P[self].y
+function Coordinate:getY()
+	return private[self].y
 end
 
-function Coordinate:setScreenX (x)
-	P[self].x = x / P[self].xf
+function Coordinate:setScreenX(x)
+	private[self].x = x / private[self].xFactor
 end
 
-function Coordinate:setScreenY (y)
-	P[self].y = y / P[self].yf
+function Coordinate:setScreenY(y)
+	private[self].y = y / private[self].yFactor
 end
 
-function Coordinate:getScreenX ()
-	return P[self].x * P[self].xf
+function Coordinate:getScreenX()
+	return private[self].x * private[self].xFactor
 end
 
-function Coordinate:getScreenY ()
-	return P[self].y * P[self].yf
+function Coordinate:getScreenY()
+	return private[self].y * private[self].yFactor
 end
 
-function Coordinate:angle (c)
+function Coordinate:angle(otherCoordinate)
 	return math.atan2(
-			c:getScreenY() - self:getScreenY(),
-			c:getScreenX() - self:getScreenX())
+		otherCoordinate:getScreenY() - self:getScreenY(),
+		otherCoordinate:getScreenX() - self:getScreenX())
 end
 
-function Coordinate:distance (c)
-	local dh = c:getScreenX() - self:getScreenX()
-	local dv = c:getScreenY() - self:getScreenY()
+function Coordinate:distance(otherCoordinate)
+	local dh = otherCoordinate:getScreenX() - self:getScreenX()
+	local dv = otherCoordinate:getScreenY() - self:getScreenY()
 
 	return math.sqrt((dh ^2) + (dv ^2))
 end
 
-function Coordinate:clone ()
-	return M.new(P[self].x, P[self].y, P[self].xf, P[self].yf)
+function Coordinate:clone()
+	local p = private[self]
+
+	return M.new(p.x, p.y, p.xFactor, p.yFactor)
 end
 
 return M

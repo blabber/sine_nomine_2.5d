@@ -1,8 +1,11 @@
-sn = {}
+local sn = {}
 sn.level = require 'sn.level'
 
-function love.load ()
-	local levelString = [[
+local level
+
+function love.load()
+	local f = love.graphics.setNewFont('font/PressStart2P-vaV7.ttf', 40)
+	level = sn.level.fromString(f, [[
 #####  #####  #####
 #...#  #...#  #...#
 #...####...####...#
@@ -42,20 +45,17 @@ function love.load ()
 #...####...####...#
 #...#  #...#  #...#
 #####  #####  #####
-]]
-
-	local f = love.graphics.setNewFont('font/PressStart2P-vaV7.ttf', 40)
-	level = sn.level.fromString(f, levelString)
+]])
 end
 
-function love.update (dt)
-	level:update(dt)
+function love.update(deltaTime)
+	level:update(deltaTime)
 end
 
-function love.keypressed (key)
+function love.keypressed(key)
 	level:keypressed(key)
 end
 
-function love.draw ()
+function love.draw()
 	level:draw()
 end
