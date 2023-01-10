@@ -77,6 +77,10 @@ function love.mousepressed(x, y)
 	end
 end
 
+function love.touchpressed(_, x, y)
+	love.mousepressed(x, y)
+end
+
 function love.draw()
 	level:draw()
 end
