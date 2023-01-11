@@ -67,6 +67,11 @@ function love.keypressed(key)
 		love.window.setFullscreen(
 			not love.window.getFullscreen())
 		return
+	elseif key == 'q' then
+		if love.system.getOS() ~= "Web" then
+			love.event.quit()
+		end
+		return
 	end
 
 	level:keypressed(key)
