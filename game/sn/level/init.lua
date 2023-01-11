@@ -63,7 +63,25 @@ function M.fromString(font, levelString)
 end
 
 function Level:update(deltaTime)
-	private[self].player:update(deltaTime)
+	local player = private[self].player
+
+	if player:isMoving() then
+		player:update(deltaTime)
+		return
+	end
+
+	if love.mouse.isDown(1) then
+		local x = love.mouse.getX()
+		local y = love.mouse.getY()
+
+		self:movePlayerTowards(x, y)
+	else
+		local t = love.touch.getTouches()
+		if t and #t >= 1 then
+			local x, y = love.touch.getPosition(t[1])
+			self:movePlayerTowards(x, y)
+		end
+	end
 end
 
 function Level:keypressed(key)
