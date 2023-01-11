@@ -91,6 +91,27 @@ function Level:keypressed(key)
 	end
 end
 
+function Level:movePlayerTowards(x, y)
+	local a = math.deg(
+		math.atan2(
+			y - love.graphics.getHeight() / 2,
+			x - love.graphics.getWidth() / 2))
+
+	if a < 0 then
+		a = a + 360
+	end
+
+	if (a > 45) and (a <= 135) then
+		self:keypressed("down")
+	elseif (a > 135) and (a <= 225) then
+		self:keypressed("left")
+	elseif (a > 225) and (a <= 315) then
+		self:keypressed("up")
+	else
+		self:keypressed("right")
+	end
+end
+
 function Level:draw()
 	local player = private[self].player
 
