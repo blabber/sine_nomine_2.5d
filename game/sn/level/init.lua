@@ -1,5 +1,6 @@
 local sn = { }
 sn.coordinate = require "sn.coordinate"
+sn.global = require "sn.global"
 sn.player = require "sn.player"
 sn.tile = require "sn.tile"
 
@@ -8,7 +9,7 @@ local M = { }
 local function createTile(coordinate, glyph, font)
 	local h = 1
 	if glyph == '#' then
-		h = 5
+		h = sn.global.MAXHEIGHTLEVELS
 	end
 
 	if glyph == ' ' then
@@ -120,7 +121,7 @@ function Level:draw()
 		love.graphics.getHeight() / 2 - player.tile.position:getScreenY())
 
 	local tiles = private[self].tiles
-	for l = 0, 4 do
+	for l = 0, sn.global.MAXHEIGHTLEVELS-1 do
 		for _, r in pairs(tiles) do
 			for _, t in pairs(r) do
 				t:draw(l, player.tile.position)

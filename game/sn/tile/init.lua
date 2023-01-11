@@ -1,3 +1,6 @@
+local sn = { }
+sn.global = require "sn.global"
+
 local M = { }
 
 local Tile = { }
@@ -41,7 +44,9 @@ function Tile:draw(heightLevel, vanishingPoint)
 
 	local c = { }
 	for _, v in ipairs(self.color) do
-		c[#c+1] = v - (5 - heightLevel) * (1 / (5 * 1.5))
+		c[#c+1] =
+			v - (sn.global.MAXHEIGHTLEVELS - heightLevel) *
+				(1 / (sn.global.MAXHEIGHTLEVELS * 1.5))
 	end
 
 	love.graphics.setColor(c[1], c[2], c[3])
