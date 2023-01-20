@@ -10,13 +10,23 @@ local function createTile(coordinate, glyph, font)
 	local h = 1
 	if glyph == '#' then
 		h = sn.global.MAXHEIGHTLEVELS
+	elseif glyph == 'O' then
+		h = 3 <= sn.global.MAXHEIGHTLEVELS
+			and 3
+			or sn.global.MAXHEIGHTLEVELS
 	end
 
 	if glyph == ' ' then
 		glyph = '#'
 	end
 
-	return sn.tile.new(coordinate, glyph, font, h)
+	t = sn.tile.new(coordinate, glyph, font, h)
+	
+	if t.glyph ~= '#' and t.glyph ~= '.' then
+		t:setColor(1, 0, 0)
+	end
+
+	return t
 end
 
 local private = { }
