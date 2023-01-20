@@ -45,12 +45,15 @@ local function conditionallyDrawDungeonTile(self, tile, heightLevel)
 		tile.color[3]
 	}
 
+	local cl = tile.heightLevels
 	if self:checkVisibility(p, tile.position) then
 		c = { 1, 1, 0 }
 		tile.known = true
+	else
+		cl = 0
 	end
 
-	if tile.known then
+	if tile.known and heightLevel <= cl then
 		tile:draw(heightLevel, p, c)
 	end
 end
