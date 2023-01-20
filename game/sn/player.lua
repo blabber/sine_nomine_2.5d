@@ -1,22 +1,21 @@
 local M = { }
 
+local SPEED = 200
+
 local Player = { }
-Player.__index = Player
 
 function M.new(tile)
-	local p = {
-		tile = tile,
-		target = tile.position:clone()
-	}
+	local p = { tile = tile }
+	Player.__index = Player
 	setmetatable(p, Player)
 
 	return p
 end
 
 function Player:isMoving()
-	return 
-		(self.target:getScreenX() ~= self.tile.position:getScreenX()) or
-		(self.target:getScreenY() ~= self.tile.position:getScreenY())
+	return
+		self.tile.position:getScreenOffsetX() ~= 0 or
+		self.tile.position:getScreenOffsetY() ~= 0
 end
 
 function Player:update(deltaTime)
@@ -24,29 +23,23 @@ function Player:update(deltaTime)
 		return
 	end
 
-	local delta = 100 * deltaTime
+	local delta = SPEED * deltaTime
 
 	local position = self.tile.position
-	if position:getScreenX() < self.target:getScreenX() then
-		position:setScreenX(
-			math.min(
-				position:getScreenX() + delta,
-				self.target:getScreenX()))
-	elseif position:getScreenX() > self.target:getScreenX() then
-		position:setScreenX(
-			math.max(
-				position:getScreenX() - delta,
-				self.target:getScreenX()))
-	elseif position:getScreenY() < self.target:getScreenY() then
-		position:setScreenY(
-			math.min(
-				position:getScreenY() + delta,
-				self.target:getScreenY()))
-	elseif position:getScreenY() > self.target:getScreenY() then
-		position:setScreenY(
-				math.max(
-					position:getScreenY() - delta,
-					self.target:getScreenY()))
+	if position:getScreenOffsetX() < 0 then
+		position:setScreenOffsetX(
+			math.min( 0, position:getScreenOffsetX() + delta))
+	elseif position:getScreenOffsetX() > 0 then
+		position:setScreenOffsetX(
+			math.max( 0, position:getScreenOffsetX() - delta))
+	end
+
+	if position:getScreenOffsetY() < 0 then
+		position:setScreenOffsetY(
+			math.min( 0, position:getScreenOffsetY() + delta))
+	elseif position:getScreenOffsetY() > 0 then
+		position:setScreenOffsetY(
+			math.max( 0, position:getScreenOffsetY() - delta))
 	end
 end
 

@@ -4,7 +4,6 @@ sn.global = require "sn.global"
 local M = { }
 
 local Tile = { }
-Tile.__index = Tile
 
 function M.new(position, glyph, font, heightLevels)
 	local t = {
@@ -14,12 +13,29 @@ function M.new(position, glyph, font, heightLevels)
 		heightLevels = heightLevels,
 		color = { 1, 1, 1 }
 	}
+	Tile.__index = Tile
 	setmetatable(t, Tile)
 
 	return t
 end
 
-function Tile:draw(heightLevel, vanishingPoint)
+function Tile:getWidth()
+	return self.font:getWidth(self.glyph)
+end
+
+function Tile:getHeight()
+	return self.font:getHeight()
+end
+
+function Tile:draw(heightLevel, vanishingPoint, overrideColor)
+	local c =
+		overrideColor or
+		{
+			self.color[1],
+			self.color[2],
+			self.color[3]
+		}
+
 	if heightLevel >= self.heightLevels then
 		return
 	end
@@ -36,15 +52,14 @@ function Tile:draw(heightLevel, vanishingPoint)
 			self.font:getHeight())
 	end
 
-	local a = self.position:angle(vanishingPoint)
-	local d = self.position:distance(vanishingPoint)
+	local a = self.position:screenAngle(vanishingPoint)
+	local d = self.position:screenDistance(vanishingPoint)
 
 	local dx = -(math.cos(a) * (d / 25)) * heightLevel
 	local dy = -(math.sin(a) * (d / 25)) * heightLevel
 
-	local c = { }
-	for _, v in ipairs(self.color) do
-		c[#c+1] =
+	for i, v in ipairs(c) do
+		c[i] =
 			v - (sn.global.MAXHEIGHTLEVELS - heightLevel) *
 				(1 / (sn.global.MAXHEIGHTLEVELS * 1.5))
 	end

@@ -1,12 +1,16 @@
 local sn = { }
-sn.coordinate = require "sn.coordinate"
+sn.position = require "sn.position"
 sn.global = require "sn.global"
 sn.player = require "sn.player"
 sn.tile = require "sn.tile"
 
+bresenham = require "bresenham"
+
 local M = { }
 
-local function createTile(coordinate, glyph, font)
+local VISIBILITYRANGE = 6.5
+
+local function createTile(position, glyph, font)
 	local h = 1
 	if glyph == '#' then
 		h = sn.global.MAXHEIGHTLEVELS
@@ -16,11 +20,7 @@ local function createTile(coordinate, glyph, font)
 			or sn.global.MAXHEIGHTLEVELS
 	end
 
-	if glyph == ' ' then
-		glyph = '#'
-	end
-
-	t = sn.tile.new(coordinate, glyph, font, h)
+	t = sn.tile.new(position, glyph, font, h)
 	
 	if t.glyph ~= '#' and t.glyph ~= '.' then
 		t:setColor(1, 0, 0)
@@ -29,14 +29,37 @@ local function createTile(coordinate, glyph, font)
 	return t
 end
 
+
 local private = { }
 setmetatable(private, { __mode = 'k' })
 
+local function conditionallyDrawDungeonTile(self, tile, heightLevel)
+	local p = private[self].player.tile.position:clone()
+
+	p:setX(math.floor(p:getX()))
+	p:setY(math.floor(p:getY()))
+
+	local c = {
+		tile.color[1],
+		tile.color[2],
+		tile.color[3]
+	}
+
+	if self:checkVisibility(p, tile.position) then
+		c = { 1, 1, 0 }
+		tile.known = true
+	end
+
+	if tile.known then
+		tile:draw(heightLevel, p, c)
+	end
+end
+
 local Level = { }
-Level.__index = Level
 
 function M.fromString(font, levelString)
 	local newLevel = { }
+	Level.__index = Level
 	setmetatable(newLevel, Level)
 
 	local tiles = { }
@@ -54,7 +77,7 @@ function M.fromString(font, levelString)
 			local w = font:getWidth('#')
 			local h = font:getHeight()
 
-			local c = sn.coordinate.new(x, y, w, h)
+			local c = sn.position.new(x, y, w, h)
 
 			if g == 's' then
 				g = '.'
@@ -70,6 +93,33 @@ function M.fromString(font, levelString)
 	end
 
 	return newLevel
+end
+
+function Level:checkVisibility(position1, position2)
+	if position1:distance(position2) >= VISIBILITYRANGE then
+		return false
+	end
+
+	local l =
+		bresenham.line(
+			position1:getX(), position1:getY(),
+			position2:getX(), position2:getY())
+	if #l <= 2 then
+		return true
+	end
+
+	local tiles = private[self].tiles
+
+	for i = 2, #l-1 do
+		local x = l[i][1]
+		local y = l[i][2]
+
+		if not tiles[y][x] or tiles[y][x].glyph == '#' then
+			return false
+		end
+	end
+
+	return true
 end
 
 function Level:update(deltaTime)
@@ -101,22 +151,34 @@ function Level:keypressed(key)
 		return
 	end
 
-	local t = player.target:clone()
+	local t = player.tile.position:clone()
 
 	if key == "up" then
-		player.target:setY(player.tile.position:getY() - 1)
+		player.tile.position:setY(player.tile.position:getY() - 1)
+
+		player.tile.position:setScreenOffsetX(0)
+		player.tile.position:setScreenOffsetY(player.tile:getHeight())
 	elseif key =="down" then
-		player.target:setY(player.tile.position:getY() + 1)
+		player.tile.position:setY(player.tile.position:getY() + 1)
+
+		player.tile.position:setScreenOffsetX(0)
+		player.tile.position:setScreenOffsetY(-player.tile:getHeight())
 	elseif key =="left" then
-		player.target:setX(player.tile.position:getX() - 1)
+		player.tile.position:setX(player.tile.position:getX() - 1)
+
+		player.tile.position:setScreenOffsetX(player.tile:getWidth())
+		player.tile.position:setScreenOffsetY(0)
 	elseif key =="right" then
-		player.target:setX(player.tile.position:getX() + 1)
+		player.tile.position:setX(player.tile.position:getX() + 1)
+
+		player.tile.position:setScreenOffsetX(-player.tile:getWidth())
+		player.tile.position:setScreenOffsetY(0)
 	end
 
 	local tiles = private[self].tiles
-	local g = tiles[player.target:getY()][player.target:getX()].glyph
+	local g = tiles[player.tile.position:getY()][player.tile.position:getX()].glyph
 	if g == '#' then
-		player.target = t
+		player.tile.position = t
 	end
 end
 
@@ -152,7 +214,7 @@ function Level:draw()
 	for l = 0, sn.global.MAXHEIGHTLEVELS-1 do
 		for _, r in pairs(tiles) do
 			for _, t in pairs(r) do
-				t:draw(l, player.tile.position)
+				conditionallyDrawDungeonTile(self, t, l)
 			end
 		end
 	end
