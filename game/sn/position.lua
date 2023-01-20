@@ -5,7 +5,7 @@ setmetatable(private, { __mode = 'k' })
 
 local Position = { }
 
-function M.new(x, y, screenFactorX, screenFactorY, screenOffsetX, screenOffsetY)
+function M.new(x, y, screenFactorX, screenFactorY)
 	local p = { }
 	Position.__index = Position
 	setmetatable(p, Position)
@@ -14,9 +14,7 @@ function M.new(x, y, screenFactorX, screenFactorY, screenOffsetX, screenOffsetY)
 		x = x or 0,
 		y = y or 0,
 		screenFactorX = screenFactorX or 1,
-		screenFactorY = screenFactorY or 1,
-		screenOffsetX = screenOffsetX or 0,
-		screenOffsetY = screenOffsetY or 0
+		screenFactorY = screenFactorY or 1
 	}
 
 	return p
@@ -38,28 +36,12 @@ function Position:getY()
 	return private[self].y
 end
 
-function Position:setScreenOffsetX(screenOffsetX)
-	private[self].screenOffsetX = screenOffsetX
-end
-
-function Position:setScreenOffsetY(screenOffsetY)
-	private[self].screenOffsetY = screenOffsetY
-end
-
-function Position:getScreenOffsetX()
-	return private[self].screenOffsetX
-end
-
-function Position:getScreenOffsetY()
-	return private[self].screenOffsetY
-end
-
 function Position:getScreenX()
-	return private[self].x * private[self].screenFactorX + private[self].screenOffsetX
+	return private[self].x * private[self].screenFactorX
 end
 
 function Position:getScreenY()
-	return private[self].y * private[self].screenFactorY + private[self].screenOffsetY
+	return private[self].y * private[self].screenFactorY
 end
 
 function Position:screenAngle(otherCoordinate)
@@ -85,7 +67,7 @@ end
 function Position:clone()
 	local p = private[self]
 
-	return M.new(p.x, p.y, p.screenFactorX, p.screenFactorY, p.screenOffsetX, p.screenOffsetY)
+	return M.new(p.x, p.y, p.screenFactorX, p.screenFactorY)
 end
 
 return M

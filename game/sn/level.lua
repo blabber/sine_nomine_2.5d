@@ -125,63 +125,24 @@ function Level:checkVisibility(position1, position2)
 	return true
 end
 
-function Level:update(deltaTime)
-	local player = private[self].player
-
-	if player:isMoving() then
-		player:update(deltaTime)
-		return
-	end
-
-	if love.mouse.isDown(1) then
-		local x = love.mouse.getX()
-		local y = love.mouse.getY()
-
-		self:movePlayerTowards(x, y)
-	else
-		local t = love.touch.getTouches()
-		if t and #t >= 1 then
-			local x, y = love.touch.getPosition(t[1])
-			self:movePlayerTowards(x, y)
-		end
-	end
-end
-
 function Level:keypressed(key)
-	local player = private[self].player
-
-	if player:isMoving() then
-		return
-	end
-
-	local t = player.tile.position:clone()
+	local p = private[self].player.tile.position
+	local t = p:clone()
 
 	if key == "up" then
-		player.tile.position:setY(player.tile.position:getY() - 1)
-
-		player.tile.position:setScreenOffsetX(0)
-		player.tile.position:setScreenOffsetY(player.tile:getHeight())
+		p:setY(p:getY() - 1)
 	elseif key =="down" then
-		player.tile.position:setY(player.tile.position:getY() + 1)
-
-		player.tile.position:setScreenOffsetX(0)
-		player.tile.position:setScreenOffsetY(-player.tile:getHeight())
+		p:setY(p:getY() + 1)
 	elseif key =="left" then
-		player.tile.position:setX(player.tile.position:getX() - 1)
-
-		player.tile.position:setScreenOffsetX(player.tile:getWidth())
-		player.tile.position:setScreenOffsetY(0)
+		p:setX(p:getX() - 1)
 	elseif key =="right" then
-		player.tile.position:setX(player.tile.position:getX() + 1)
-
-		player.tile.position:setScreenOffsetX(-player.tile:getWidth())
-		player.tile.position:setScreenOffsetY(0)
+		p:setX(p:getX() + 1)
 	end
 
 	local tiles = private[self].tiles
-	local g = tiles[player.tile.position:getY()][player.tile.position:getX()].glyph
+	local g = tiles[p:getY()][p:getX()].glyph
 	if g == '#' then
-		player.tile.position = t
+		private[self].player.tile.position = t
 	end
 end
 

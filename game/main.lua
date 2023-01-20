@@ -61,10 +61,6 @@ function love.load()
 ]])
 end
 
-function love.update(deltaTime)
-	level:update(deltaTime)
-end
-
 function love.keypressed(key)
 	if key == 'f' then
 		love.window.setFullscreen(
@@ -78,6 +74,10 @@ function love.keypressed(key)
 	end
 
 	level:keypressed(key)
+end
+
+function love.mousepressed(x, y)
+	level:movePlayerTowards(x, y)
 end
 
 function love.draw()
