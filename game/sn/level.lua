@@ -14,10 +14,6 @@ local function createTile(position, glyph, font)
 	local h = 1
 	if glyph == '#' then
 		h = sn.global.MAXHEIGHTLEVELS
-	elseif glyph == 'O' then
-		h = 3 <= sn.global.MAXHEIGHTLEVELS
-			and 3
-			or sn.global.MAXHEIGHTLEVELS
 	end
 
 	t = sn.tile.new(position, glyph, font, h)
