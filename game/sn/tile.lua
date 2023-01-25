@@ -11,7 +11,8 @@ function M.new(position, glyph, font, heightLevels)
 		glyph = glyph,
 		font = font,
 		heightLevels = heightLevels,
-		color = { 1, 1, 1 }
+		color = { 1, 1, 1 },
+		drawable = love.graphics.newText(font, glyph)
 	}
 	Tile.__index = Tile
 	setmetatable(t, Tile)
@@ -55,8 +56,10 @@ function Tile:draw(heightLevel, vanishingPoint, overrideColor)
 	local a = self.position:screenAngle(vanishingPoint)
 	local d = self.position:screenDistance(vanishingPoint)
 
-	local dx = -(math.cos(a) * (d / 25)) * heightLevel
-	local dy = -(math.sin(a) * (d / 25)) * heightLevel
+	local divisor = 25
+
+	local dx = -(math.cos(a) * (d / sn.constants.PERSPECTIVEDIVISOR)) * heightLevel
+	local dy = -(math.sin(a) * (d / sn.constants.PERSPECTIVEDIVISOR)) * heightLevel
 
 	for i, v in ipairs(c) do
 		c[i] =
@@ -65,10 +68,12 @@ function Tile:draw(heightLevel, vanishingPoint, overrideColor)
 	end
 
 	love.graphics.setColor(c[1], c[2], c[3])
-	love.graphics.print(
-		self.glyph,
+	love.graphics.draw(
+		self.drawable,
 		self.position:getScreenX() + dx,
-		self.position:getScreenY() + dy)
+		self.position:getScreenY() + dy,
+		0,
+		1 + heightLevel / sn.constants.PERSPECTIVEDIVISOR)
 end
 
 function Tile:setColor(r, g, b)

@@ -8,8 +8,6 @@ bresenham = require "lib.bresenham"
 
 local M = { }
 
-local VISIBILITYRANGE = 6.5
-
 local function createTile(position, glyph, font)
 	local h = 1
 	if glyph == '#' then
@@ -46,8 +44,9 @@ local function conditionallyDrawDungeonTile(self, tile, heightLevel)
 		cl = 0
 	end
 
+	local vp = p:newOffsetPosition(0.5, 0.5)
 	if tile.known and heightLevel <= cl then
-		tile:draw(heightLevel, p, c)
+		tile:draw(heightLevel, vp, c)
 	end
 end
 
@@ -94,7 +93,7 @@ function M.fromString(font, levelString)
 end
 
 function Level:checkVisibility(position1, position2)
-	if position1:distance(position2) >= VISIBILITYRANGE then
+	if position1:distance(position2) >= sn.constants.VISIBILITYRANGE then
 		return false
 	end
 
@@ -165,9 +164,11 @@ end
 function Level:draw()
 	local player = private[self].player
 
+	local cp = player.tile.position:newOffsetPosition(0.5, 0.5)
+
 	love.graphics.translate(
-		love.graphics.getWidth() / 2 - player.tile.position:getScreenX(),
-		love.graphics.getHeight() / 2 - player.tile.position:getScreenY())
+		love.graphics.getWidth() / 2 - cp:getScreenX(),
+		love.graphics.getHeight() / 2 - cp:getScreenY())
 
 	local tiles = private[self].tiles
 	for l = 0, sn.constants.MAXHEIGHTLEVELS-1 do

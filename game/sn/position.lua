@@ -64,6 +64,15 @@ function Position:distance(otherCoordinate)
 	return math.sqrt((dh ^2) + (dv ^2))
 end
 
+function Position:newOffsetPosition(offsetX, offsetY)
+	local p = self:clone()
+
+	p:setX(p:getX() + offsetX)
+	p:setY(p:getY() + offsetY)
+
+	return p
+end
+
 function Position:clone()
 	local p = private[self]
 
