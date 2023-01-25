@@ -56,8 +56,6 @@ function Tile:draw(heightLevel, vanishingPoint, overrideColor)
 	local a = self.position:screenAngle(vanishingPoint)
 	local d = self.position:screenDistance(vanishingPoint)
 
-	local divisor = 25
-
 	local dx = -(math.cos(a) * (d / sn.constants.PERSPECTIVEDIVISOR)) * heightLevel
 	local dy = -(math.sin(a) * (d / sn.constants.PERSPECTIVEDIVISOR)) * heightLevel
 
