@@ -4,7 +4,7 @@ sn.global = require "sn.global"
 sn.player = require "sn.player"
 sn.tile = require "sn.tile"
 
-bresenham = require "bresenham"
+bresenham = require "lib.bresenham"
 
 local M = { }
 
