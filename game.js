@@ -92,6 +92,7 @@ Module.expectedDataFileDownloads++;
       }
       Module['FS_createPath']('/', 'font', true, true);
       Module['FS_createPath']('font', 'misc', true, true);
+      Module['FS_createPath']('/', 'lib', true, true);
       Module['FS_createPath']('/', 'sn', true, true);
 
       function DataRequest(start, end, crunched, audio) {
@@ -286,6 +287,6 @@ Module.expectedDataFileDownloads++;
     }
 
   }
-  loadPackage({"package_uuid":"205dcfeb-acb6-44f9-902b-e6a7d227e409","remote_package_size":98910,"files":[{"filename":"bresenham.lua","crunched":0,"start":0,"end":845,"audio":false},{"filename":"font/PressStart2P-vaV7.ttf","crunched":0,"start":845,"end":83325,"audio":false},{"filename":"font/info.txt","crunched":0,"start":83325,"end":83423,"audio":false},{"filename":"font/misc/FONTLOG-e017.txt","crunched":0,"start":83423,"end":85950,"audio":false},{"filename":"font/misc/LICENSE-65f9.txt","crunched":0,"start":85950,"end":90357,"audio":false},{"filename":"main.lua","crunched":0,"start":90357,"end":91998,"audio":false},{"filename":"sn/global.lua","crunched":0,"start":91998,"end":92045,"audio":false},{"filename":"sn/level.lua","crunched":0,"start":92045,"end":95705,"audio":false},{"filename":"sn/player.lua","crunched":0,"start":95705,"end":95963,"audio":false},{"filename":"sn/position.lua","crunched":0,"start":95963,"end":97413,"audio":false},{"filename":"sn/tile.lua","crunched":0,"start":97413,"end":98910,"audio":false}]});
+  loadPackage({"package_uuid":"8ff30f1d-28ac-4edd-8d6b-05d7825dcf81","remote_package_size":100260,"files":[{"filename":"font/PressStart2P-vaV7.ttf","crunched":0,"start":0,"end":82480,"audio":false},{"filename":"font/info.txt","crunched":0,"start":82480,"end":82578,"audio":false},{"filename":"font/misc/FONTLOG-e017.txt","crunched":0,"start":82578,"end":85105,"audio":false},{"filename":"font/misc/LICENSE-65f9.txt","crunched":0,"start":85105,"end":89512,"audio":false},{"filename":"lib/bresenham.lua","crunched":0,"start":89512,"end":90357,"audio":false},{"filename":"lib/pathfinding.lua","crunched":0,"start":90357,"end":91416,"audio":false},{"filename":"main.lua","crunched":0,"start":91416,"end":93057,"audio":false},{"filename":"sn/constants.lua","crunched":0,"start":93057,"end":93154,"audio":false},{"filename":"sn/creature.lua","crunched":0,"start":93154,"end":93422,"audio":false},{"filename":"sn/level.lua","crunched":0,"start":93422,"end":96962,"audio":false},{"filename":"sn/position.lua","crunched":0,"start":96962,"end":98563,"audio":false},{"filename":"sn/tile.lua","crunched":0,"start":98563,"end":100260,"audio":false}]});
 
 })();
