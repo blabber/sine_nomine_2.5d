@@ -67,12 +67,10 @@ function M.fromString(font, levelString)
 		font = font
 	}
 
+	local y = 0
 	for l in levelString:gmatch('([^\n]+)') do
-		tilesRow = { }
-		tiles[#tiles+1] = tilesRow
-		for g in l:gmatch('(.)') do
-			local x = #tilesRow + 1
-			local y = #tiles
+		y = y + 1
+		for x, g in l:gmatch('()(.)') do
 			local w = font:getWidth('#')
 			local h = font:getHeight()
 
@@ -87,7 +85,11 @@ function M.fromString(font, levelString)
 				private[newLevel].player = sn.player.new(pt)
 			end
 
-			tilesRow[#tilesRow+1] = createTile(c:clone(), g, font)
+			if not tiles[x] then
+				tiles[x] = { }
+			end
+
+			tiles[x][y] = createTile(c:clone(), g, font)
 		end
 	end
 
@@ -113,7 +115,7 @@ function Level:checkVisibility(position1, position2)
 		local x = l[i][1]
 		local y = l[i][2]
 
-		if not tiles[y][x] or tiles[y][x].glyph == '#' then
+		if not tiles[x][y] or tiles[x][y].glyph == '#' then
 			return false
 		end
 	end
@@ -136,7 +138,7 @@ function Level:keypressed(key)
 	end
 
 	local tiles = private[self].tiles
-	local g = tiles[p:getY()][p:getX()].glyph
+	local g = tiles[p:getX()][p:getY()].glyph
 	if g == '#' then
 		private[self].player.tile.position = t
 	end
@@ -172,8 +174,8 @@ function Level:draw()
 
 	local tiles = private[self].tiles
 	for l = 0, sn.global.MAXHEIGHTLEVELS-1 do
-		for _, r in pairs(tiles) do
-			for _, t in pairs(r) do
+		for _, c in pairs(tiles) do
+			for _, t in pairs(c) do
 				conditionallyDrawDungeonTile(self, t, l)
 			end
 		end
