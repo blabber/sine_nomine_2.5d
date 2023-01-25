@@ -1,16 +1,16 @@
 local M = { }
 
-local Player = { }
+local Creature = { }
 
 function M.new(tile)
 	local p = { tile = tile }
-	Player.__index = Player
-	setmetatable(p, Player)
+	Creature.__index = Creature
+	setmetatable(p, Creature)
 
 	return p
 end
 
-function Player:draw(heightLevel, vanishingPoint)
+function Creature:draw(heightLevel, vanishingPoint)
 	self.tile:draw(heightLevel, vanishingPoint)
 end
 

@@ -1,7 +1,7 @@
 local sn = { }
 sn.position = require "sn.position"
-sn.global = require "sn.global"
-sn.player = require "sn.player"
+sn.constants = require "sn.constants"
+sn.creature = require "sn.creature"
 sn.tile = require "sn.tile"
 
 bresenham = require "lib.bresenham"
@@ -13,7 +13,7 @@ local VISIBILITYRANGE = 6.5
 local function createTile(position, glyph, font)
 	local h = 1
 	if glyph == '#' then
-		h = sn.global.MAXHEIGHTLEVELS
+		h = sn.constants.MAXHEIGHTLEVELS
 	end
 
 	t = sn.tile.new(position, glyph, font, h)
@@ -30,10 +30,7 @@ local private = { }
 setmetatable(private, { __mode = 'k' })
 
 local function conditionallyDrawDungeonTile(self, tile, heightLevel)
-	local p = private[self].player.tile.position:clone()
-
-	p:setX(math.floor(p:getX()))
-	p:setY(math.floor(p:getY()))
+	local p = private[self].player.tile.position
 
 	local c = {
 		tile.color[1],
@@ -82,7 +79,7 @@ function M.fromString(font, levelString)
 				local pt = createTile(c:clone(), '@', font)
 
 				pt:setColor(1, 1, 0)
-				private[newLevel].player = sn.player.new(pt)
+				private[newLevel].player = sn.creature.new(pt)
 			end
 
 			if not tiles[x] then
@@ -173,7 +170,7 @@ function Level:draw()
 		love.graphics.getHeight() / 2 - player.tile.position:getScreenY())
 
 	local tiles = private[self].tiles
-	for l = 0, sn.global.MAXHEIGHTLEVELS-1 do
+	for l = 0, sn.constants.MAXHEIGHTLEVELS-1 do
 		for _, c in pairs(tiles) do
 			for _, t in pairs(c) do
 				conditionallyDrawDungeonTile(self, t, l)

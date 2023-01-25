@@ -1,5 +1,5 @@
 local sn = { }
-sn.global = require "sn.global"
+sn.constants = require "sn.constants"
 
 local M = { }
 
@@ -60,8 +60,8 @@ function Tile:draw(heightLevel, vanishingPoint, overrideColor)
 
 	for i, v in ipairs(c) do
 		c[i] =
-			v - (sn.global.MAXHEIGHTLEVELS - heightLevel) *
-				(1 / (sn.global.MAXHEIGHTLEVELS * 1.5))
+			v - (sn.constants.MAXHEIGHTLEVELS - heightLevel) *
+				(1 / (sn.constants.MAXHEIGHTLEVELS * 1.5))
 	end
 
 	love.graphics.setColor(c[1], c[2], c[3])
