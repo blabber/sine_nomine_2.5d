@@ -24,11 +24,8 @@ local function createTile(position, glyph, font)
 end
 
 
-local private = { }
-setmetatable(private, { __mode = 'k' })
-
 local function conditionallyDrawDungeonTile(self, tile, heightLevel)
-	local p = private[self].player.tile.position
+	local p = self.player.tile.position
 
 	local c = {
 		tile.color[1],
@@ -53,15 +50,13 @@ end
 local Level = { }
 
 function M.fromString(font, levelString)
-	local newLevel = { }
-	Level.__index = Level
-	setmetatable(newLevel, Level)
-
-	local tiles = { }
-	private[newLevel] = {
-		tiles = tiles,
-		font = font
+	local level = {
+		tiles = { },
+		font = font,
+		player = nil
 	}
+	Level.__index = Level
+	setmetatable(level, Level)
 
 	local y = 0
 	for l in levelString:gmatch('([^\n]+)') do
@@ -78,18 +73,18 @@ function M.fromString(font, levelString)
 				local pt = createTile(c:clone(), '@', font)
 
 				pt:setColor(1, 1, 0)
-				private[newLevel].player = sn.creature.new(pt)
+				level.player = sn.creature.new(pt)
 			end
 
-			if not tiles[x] then
-				tiles[x] = { }
+			if not level.tiles[x] then
+				level.tiles[x] = { }
 			end
 
-			tiles[x][y] = createTile(c:clone(), g, font)
+			level.tiles[x][y] = createTile(c:clone(), g, font)
 		end
 	end
 
-	return newLevel
+	return level
 end
 
 function Level:checkVisibility(position1, position2)
@@ -99,19 +94,19 @@ function Level:checkVisibility(position1, position2)
 
 	local l =
 		bresenham.line(
-			position1:getX(), position1:getY(),
-			position2:getX(), position2:getY())
+			position1.x, position1.y,
+			position2.x, position2.y)
 	if #l <= 2 then
 		return true
 	end
-
-	local tiles = private[self].tiles
 
 	for i = 2, #l-1 do
 		local x = l[i][1]
 		local y = l[i][2]
 
-		if not tiles[x][y] or tiles[x][y].glyph == '#' then
+		if not self.tiles[x][y] or
+			self.tiles[x][y].glyph == '#' then
+
 			return false
 		end
 	end
@@ -120,23 +115,22 @@ function Level:checkVisibility(position1, position2)
 end
 
 function Level:keypressed(key)
-	local p = private[self].player.tile.position
+	local p = self.player.tile.position
 	local t = p:clone()
 
 	if key == "up" then
-		p:setY(p:getY() - 1)
+		p.y = p.y - 1
 	elseif key =="down" then
-		p:setY(p:getY() + 1)
+		p.y = p.y + 1
 	elseif key =="left" then
-		p:setX(p:getX() - 1)
+		p.x = p.x - 1
 	elseif key =="right" then
-		p:setX(p:getX() + 1)
+		p.x = p.x + 1
 	end
 
-	local tiles = private[self].tiles
-	local g = tiles[p:getX()][p:getY()].glyph
+	local g = self.tiles[p.x][p.y].glyph
 	if g == '#' then
-		private[self].player.tile.position = t
+		self.player.tile.position = t
 	end
 end
 
@@ -162,24 +156,21 @@ function Level:movePlayerTowards(x, y)
 end
 
 function Level:draw()
-	local player = private[self].player
-
-	local cp = player.tile.position:newOffsetPosition(0.5, 0.5)
+	local cp = self.player.tile.position:newOffsetPosition(0.5, 0.5)
 
 	love.graphics.translate(
 		love.graphics.getWidth() / 2 - cp:getScreenX(),
 		love.graphics.getHeight() / 2 - cp:getScreenY())
 
-	local tiles = private[self].tiles
 	for l = 0, sn.constants.MAXHEIGHTLEVELS-1 do
-		for _, c in pairs(tiles) do
+		for _, c in pairs(self.tiles) do
 			for _, t in pairs(c) do
 				conditionallyDrawDungeonTile(self, t, l)
 			end
 		end
 	end
 
-	player:draw(0, player.tile.position)
+	self.player:draw(0, self.player.tile.position)
 end
 
 return M
