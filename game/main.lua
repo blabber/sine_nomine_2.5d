@@ -15,8 +15,8 @@ function love.load()
 		})
 	love.keyboard.setKeyRepeat(true)
 
-	local f = love.graphics.setNewFont('font/PressStart2P-vaV7.ttf', 40)
-	level = sn.level.fromString(f, [[
+	love.graphics.setNewFont('font/PressStart2P-vaV7.ttf', 40)
+	level = sn.level.fromString([[
                      
  #####  #####  ##### 
  #...#  #...#  #...# 
@@ -28,7 +28,7 @@ function love.load()
   #.#    #.#    #.#  
   #.#    #.#    #.#  
   #.#    #.#    #.#  
-  #.# ####.#### #.#  
+  #.# ####+#### #.#  
   #.# #.......# #.#  
   #.# #.......# #.#  
   #.# #.......# #.#  
@@ -46,7 +46,7 @@ function love.load()
   #.# #.......# #.#  
   #.# #.......# #.#  
   #.# #.......# #.#  
-  #.# ####.#### #.#  
+  #.# ####+#### #.#  
   #.#    #.#    #.#  
   #.#    #.#    #.#  
   #.#    #.#    #.#  
@@ -59,6 +59,10 @@ function love.load()
  #####  #####  ##### 
                      
 ]])
+end
+
+function love.update(dt)
+	level:update(dt)
 end
 
 function love.keypressed(key)

@@ -2,12 +2,10 @@ local M = {}
 
 local Position = { }
 
-function M.new(x, y, screenFactorX, screenFactorY)
+function M.new(x, y)
 	local p = {
 		x = x or 0,
-		y = y or 0,
-		screenFactorX = screenFactorX or 1,
-		screenFactorY = screenFactorY or 1
+		y = y or 0
 	}
 	Position.__index = Position
 	setmetatable(p, Position)
@@ -16,11 +14,11 @@ function M.new(x, y, screenFactorX, screenFactorY)
 end
 
 function Position:getScreenX()
-	return self.x * self.screenFactorX
+	return self.x * love.graphics.getFont():getWidth('#')
 end
 
 function Position:getScreenY()
-	return self.y * self.screenFactorY
+	return self.y * love.graphics.getFont():getHeight()
 end
 
 function Position:screenAngle(otherCoordinate)
@@ -53,7 +51,7 @@ function Position:newOffsetPosition(offsetX, offsetY)
 end
 
 function Position:clone()
-	return M.new(self.x, self.y, self.screenFactorX, self.screenFactorY)
+	return M.new(self.x, self.y)
 end
 
 return M

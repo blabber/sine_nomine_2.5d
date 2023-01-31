@@ -5,27 +5,18 @@ local M = { }
 
 local Tile = { }
 
-function M.new(position, glyph, font, heightLevels)
+function M.new(position, glyph, heightLevels)
 	local t = {
 		position = position,
 		glyph = glyph,
-		font = font,
-		heightLevels = heightLevels,
+		heightLevels = heightLevels or 1,
 		color = { 1, 1, 1 },
-		drawable = love.graphics.newText(font, glyph)
+		drawable = love.graphics.newText(love.graphics.getFont(), glyph)
 	}
 	Tile.__index = Tile
 	setmetatable(t, Tile)
 
 	return t
-end
-
-function Tile:getWidth()
-	return self.font:getWidth(self.glyph)
-end
-
-function Tile:getHeight()
-	return self.font:getHeight()
 end
 
 function Tile:draw(heightLevel, vanishingPoint, overrideColor)
@@ -41,16 +32,14 @@ function Tile:draw(heightLevel, vanishingPoint, overrideColor)
 		return
 	end
 
-	love.graphics.setFont(self.font)
-
 	if heightLevel == 0 then
 		love.graphics.setColor(0, 0, 0)
 		love.graphics.rectangle(
 			"fill",
 			self.position:getScreenX(),
 			self.position:getScreenY(),
-			self.font:getWidth(self.glyph),
-			self.font:getHeight())
+			love.graphics.getFont():getWidth(self.glyph),
+			love.graphics.getFont():getHeight())
 	end
 
 	local a = self.position:screenAngle(vanishingPoint)
