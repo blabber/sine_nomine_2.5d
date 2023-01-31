@@ -1,8 +1,6 @@
 local sn = { }
-sn.position = require "sn.position"
 sn.constants = require "sn.constants"
 sn.entity = require "sn.entity"
-sn.tile = require "sn.tile"
 
 bresenham = require "lib.bresenham"
 board = require "lib.board"
