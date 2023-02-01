@@ -1,6 +1,6 @@
 local sn = { }
+sn.entities = require "sn.entities"
 sn.constants = require "sn.constants"
-sn.entity = require "sn.entity"
 
 bresenham = require "lib.bresenham"
 board = require "lib.board"
@@ -27,14 +27,14 @@ function M.fromString(levelString)
 		y = y + 1
 		for x, g in l:gmatch('()(.)') do
 			if g == 's' then
-				level.player = sn.entity.newPlayer(x, y)
-				level.dungeon:set(x, y, sn.entity.newFloor(x, y))
+				level.player = sn.entities.newPlayer(x, y)
+				level.dungeon:set(x, y, sn.entities.newFloor(x, y))
 			elseif g == '.' then
-				level.dungeon:set(x, y, sn.entity.newFloor(x, y))
+				level.dungeon:set(x, y, sn.entities.newFloor(x, y))
 			elseif g == '#' then
-				level.dungeon:set(x, y, sn.entity.newWall(x, y))
+				level.dungeon:set(x, y, sn.entities.newWall(x, y))
 			elseif g == '+' then
-				level.dungeon:set(x, y, sn.entity.newDoor(x, y))
+				level.dungeon:set(x, y, sn.entities.newDoor(x, y))
 			end
 		end
 	end
