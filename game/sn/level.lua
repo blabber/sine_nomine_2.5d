@@ -43,19 +43,18 @@ function M.fromString(levelString)
 end
 
 function Level:calculateFieldOfView()
-	for d in self.dungeon:iterate() do
-		local dp = d.tile.position
-		local pp = self.player.tile.position
+	local pp = self.player.tile.position
 
-		if pp:distance(dp) >= sn.constants.VISIBILITYRANGE then
-			d.isVisible = false
-			goto continue
+	local function checkVisibility(entity)
+		local ep = entity.tile.position
+
+		if pp:distance(ep) >= sn.constants.VISIBILITYRANGE then
+			return false
 		end
 
-		local l = bresenham.line( pp.x, pp.y, dp.x, dp.y)
+		local l = bresenham.line( pp.x, pp.y, ep.x, ep.y)
 		if #l <= 2 then
-			d.isVisible = true
-			goto continue
+			return true
 		end
 
 		for i = 2, #l-1 do
@@ -65,13 +64,15 @@ function Level:calculateFieldOfView()
 			if not self.dungeon:get(x, y) or
 				self.dungeon:get(x, y).isOpaque then
 
-				d.isVisible = false
-				goto continue
+				return false
 			end
 		end
 
-		d.isVisible = true
-		::continue::
+		return true
+	end
+
+	for e in self.dungeon:iterate() do
+		e.isVisible = checkVisibility(e)
 	end
 end
 
