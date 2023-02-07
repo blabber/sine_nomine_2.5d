@@ -13,30 +13,27 @@ local Door = sn.entities.entity.new {
 }
 
 function M.new(x, y)
+	local t = sn.tile.new(
+		sn.position.new(x, y),
+		'+',
+		sn.constants.MAXHEIGHTLEVELS)
+	t:setColor(1, 1, 0)
+
 	return Door:new{
-		tile = sn.tile.new(
-			sn.position.new(x, y),
-			'+',
-			sn.constants.MAXHEIGHTLEVELS)
+		tile = t
 	}
 end
 
 function Door:handleCollision(entity)
-	if entity.tile.position.x == self.tile.position.x and
-		 entity.tile.position.y == self.tile.position.y and
-		 self.isBlocking then
+	if self.isBlocking then
+		self.isBlocking = false
+		self.isOpaque = false
 
-		 self.isBlocking = false
-		 self.isOpaque = false
-
-		 self.tile = sn.tile.new(
-		 	self.tile.position,
+		self.tile = sn.tile.new(
+			self.tile.position,
 			'.')
-		
-		return true
+		self.tile:setColor(1, 1, 0)
 	end
-
-	return false
 end
 
 return M

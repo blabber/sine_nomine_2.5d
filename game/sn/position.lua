@@ -13,6 +13,12 @@ function M.new(x, y)
 	return p
 end
 
+function Position:__eq(otherPosition)
+	return
+		self.x == otherPosition.x and
+		self.y == otherPosition.y
+end
+
 function Position:getScreenX()
 	return self.x * love.graphics.getFont():getWidth('#')
 end
@@ -21,22 +27,22 @@ function Position:getScreenY()
 	return self.y * love.graphics.getFont():getHeight()
 end
 
-function Position:screenAngle(otherCoordinate)
+function Position:screenAngle(otherPosition)
 	return math.atan2(
-		otherCoordinate:getScreenY() - self:getScreenY(),
-		otherCoordinate:getScreenX() - self:getScreenX())
+		otherPosition:getScreenY() - self:getScreenY(),
+		otherPosition:getScreenX() - self:getScreenX())
 end
 
-function Position:screenDistance(otherCoordinate)
-	local dh = otherCoordinate:getScreenX() - self:getScreenX()
-	local dv = otherCoordinate:getScreenY() - self:getScreenY()
+function Position:screenDistance(otherPosition)
+	local dh = otherPosition:getScreenX() - self:getScreenX()
+	local dv = otherPosition:getScreenY() - self:getScreenY()
 
 	return math.sqrt((dh ^2) + (dv ^2))
 end
 
-function Position:distance(otherCoordinate)
-	local dh = otherCoordinate.x - self.x
-	local dv = otherCoordinate.y - self.y
+function Position:distance(otherPosition)
+	local dh = otherPosition.x - self.x
+	local dv = otherPosition.y - self.y
 
 	return math.sqrt((dh ^2) + (dv ^2))
 end

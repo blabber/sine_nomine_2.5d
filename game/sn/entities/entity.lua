@@ -3,6 +3,8 @@ local M = { }
 local Entity = {
 	tile = nil,
 
+	collisionPriority = 0,
+
 	isVisible = false,
 	isOpaque = false,
 	isBlocking = false,
@@ -31,9 +33,9 @@ function Entity:draw(heightLevel, vanishingPoint)
 
 	local l = self.tile.heightLevels
 	if self.isVisible then
-		c = { 1, 1, 0 }
 		self.isKnown = true
 	else
+		c = { 1, 1, 1 }
 		l = 0
 	end
 
@@ -42,7 +44,30 @@ function Entity:draw(heightLevel, vanishingPoint)
 	end
 end
 
+function Entity:checkCollision(entity)
+	if self == entity then
+		return
+	end
+
+	if self.tile.position == entity.tile.position then
+		if self.collisionPriority >= entity.collisionPriority then
+			self:handleCollision(entity)
+			entity:handleCollision(self)
+		else
+			entity:handleCollision(self)
+			self:handleCollision(entity)
+		end
+
+		return true
+	end
+
+	return false
+end
+
 function Entity:handleCollision(entity)
+end
+
+function Entity:act(player, findPathFunc)
 end
 
 return M

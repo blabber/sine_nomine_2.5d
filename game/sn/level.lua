@@ -4,6 +4,7 @@ sn.constants = require "sn.constants"
 
 bresenham = require "lib.bresenham"
 board = require "lib.board"
+pathfinding = require "lib.pathfinding"
 
 local M = { }
 
@@ -17,7 +18,9 @@ function M.fromString(levelString)
 
 	local level = {
 		dungeon = board.new(m),
-		player = nil
+		enemies = { },
+		player = nil,
+		doUpdate = true
 	}
 	Level.__index = Level
 	setmetatable(level, Level)
@@ -28,6 +31,9 @@ function M.fromString(levelString)
 		for x, g in l:gmatch('()(.)') do
 			if g == 's' then
 				level.player = sn.entities.newPlayer(x, y)
+				level.dungeon:set(x, y, sn.entities.newFloor(x, y))
+			elseif g == 'o' then
+				level.enemies[#level.enemies+1] = sn.entities.newEnemy(x, y)
 				level.dungeon:set(x, y, sn.entities.newFloor(x, y))
 			elseif g == '.' then
 				level.dungeon:set(x, y, sn.entities.newFloor(x, y))
@@ -40,6 +46,36 @@ function M.fromString(levelString)
 	end
 
 	return level
+end
+
+function Level:findPath(startPosition, endPosition, ignoreEnemies)
+	return pathfinding.find(
+		startPosition.x,
+		startPosition.y,
+		endPosition.x,
+		endPosition.y,
+		function (x, y)
+			if x == endPosition.x and y == endPosition.y then
+				return true
+			end
+
+			if self.dungeon:get(x, y).isBlocking then
+				return false
+			end
+
+			if not ignoreEnemies then
+				for _, e in pairs(self.enemies) do
+					if e.isBlocking and
+						e.tile.position.x == x and
+						e.tile.position.y == y then
+
+						return false
+					end
+				end
+			end
+
+			return true
+		end)
 end
 
 function Level:calculateFieldOfView()
@@ -74,12 +110,54 @@ function Level:calculateFieldOfView()
 	for e in self.dungeon:iterate() do
 		e.isVisible = checkVisibility(e)
 	end
+
+	for _, e in pairs(self.enemies) do
+		e.isVisible = checkVisibility(e)
+	end
 end
 
 function Level:update(dt)
-	for e in self.dungeon:iterate() do
-		self.player:handleCollision(e)
+	if not self.doUpdate then
+		return
 	end
+	self.doUpdate = false
+
+	for _, e in pairs(self.enemies) do
+		e:act(
+			self.player,
+			function (player)
+				local p = self:findPath(e.tile.position, player.tile.position)
+				if p then
+					return p
+				end
+
+				return self:findPath(e.tile.position, player.tile.position, true)
+			end)
+	end
+
+	for e in self.dungeon:iterate() do
+		self.player:checkCollision(e)
+	end
+
+	repeat
+		local collisionDetected = false
+
+		for _, e in pairs(self.enemies) do
+			collisionDetected = self.player:checkCollision(e) or collisionDetected
+
+			for _, oe in pairs(self.enemies) do
+				collisionDetected = e:checkCollision(oe) or collisionDetected
+			end
+		end
+
+		for _, e in pairs(self.enemies) do
+			collisionDetected = self.player:checkCollision(e) or collisionDetected
+
+			for _, oe in pairs(self.enemies) do
+				collisionDetected = e:checkCollision(oe) or collisionDetected
+			end
+		end
+	until not collisionDetected
 
 	self:calculateFieldOfView()
 end
@@ -96,6 +174,8 @@ function Level:keypressed(key)
 	elseif key =="right" then
 		self.player:moveTo(p.x + 1, p.y)
 	end
+
+	self.doUpdate = true
 end
 
 function Level:movePlayerTowards(x, y)
@@ -128,6 +208,10 @@ function Level:draw()
 
 	for l = 0, sn.constants.MAXHEIGHTLEVELS-1 do
 		for e in self.dungeon:iterate() do
+			e:draw(l, cp)
+		end
+
+		for _, e in pairs(self.enemies) do
 			e:draw(l, cp)
 		end
 	end

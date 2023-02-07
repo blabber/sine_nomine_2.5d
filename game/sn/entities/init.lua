@@ -5,6 +5,7 @@ sn.entities.wall = require "sn.entities.wall"
 sn.entities.floor = require "sn.entities.floor"
 sn.entities.door = require "sn.entities.door"
 sn.entities.player = require "sn.entities.player"
+sn.entities.enemy = require "sn.entities.enemy"
 
 local M = { }
 
@@ -22,6 +23,10 @@ end
 
 function M.newPlayer(x, y)
 	return sn.entities.player.new(x, y)
+end
+
+function M.newEnemy(x, y)
+	return sn.entities.enemy.new(x, y)
 end
 
 return M

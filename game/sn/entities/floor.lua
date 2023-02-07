@@ -9,10 +9,13 @@ local M = { }
 local Floor = sn.entities.entity.new()
 
 function M.new(x, y)
+	local t = sn.tile.new(
+		sn.position.new(x, y),
+		'.')
+	t:setColor(1, 1, 0)
+
 	return Floor:new{
-		tile = sn.tile.new(
-			sn.position.new(x, y),
-			'.')
+		tile = t
 	}
 end
 

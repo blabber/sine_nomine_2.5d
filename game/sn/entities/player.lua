@@ -8,7 +8,9 @@ local M = { }
 
 local Player = sn.entities.entity.new {
 	lastPosition = nil,
-	isVisible = true
+	isVisible = true,
+	isBlocking = true,
+	collisionPriority = 10
 }
 
 function M.new(x, y)
@@ -21,18 +23,11 @@ function M.new(x, y)
 end
 
 function Player:handleCollision(entity)
-	if entity:handleCollision(self) then
+	if entity.isBlocking and
+		self.tile.position == entity.tile.position then
+
 		self.tile.position = self.lastPosition
-		return
 	end
-
-	if entity.tile.position.x == self.tile.position.x and
-		 entity.tile.position.y == self.tile.position.y and
-		 entity.isBlocking then
-
-		 self.tile.position = self.lastPosition
-	end
-
 end
 
 function Player:moveTo(x, y)

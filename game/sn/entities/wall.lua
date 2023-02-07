@@ -13,11 +13,14 @@ local Wall = sn.entities.entity.new {
 }
 
 function M.new(x, y)
+	local t = sn.tile.new(
+		sn.position.new(x, y),
+		'#',
+		sn.constants.MAXHEIGHTLEVELS)
+	t:setColor(1, 1, 0)
+
 	return Wall:new{
-		tile = sn.tile.new(
-			sn.position.new(x, y),
-			'#',
-			sn.constants.MAXHEIGHTLEVELS)
+		tile = t
 	}
 end
 
